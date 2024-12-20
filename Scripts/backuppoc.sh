@@ -6,7 +6,6 @@ dest='/mnt/d/onedrive/backups'
 now=$(date +%y-%m-%d_%H_%M_%S)
 archive="$(basename "$source")"'_Backup_'"$now"'.tgz'
 setColor 'info' && echo 'Creating file '"$archive"
-# tar czf "$dest"'/'"$archive" -C / "$source"'/'
-tar czf $dest'/'$archive -C / $source/
+tar czf "$dest"'/'"$archive" -C / "$source"'/' 1>/dev/null
 # Remove all but the 100 most recent files
 ls -dt "$dest"/* | tail -n +101 | xargs -d '\n' rm 2>/dev/null
