@@ -43,5 +43,4 @@ elif [ "${retval:0}" != x ]; then
     set +x && nohup "$scrdir"'/backupPOC.sh'
 fi
 cd ..
-echo "$PWD" '>>'  "$(basename "$pardir")"
 "$scrdir"'/syncrepos.sh' "$(basename "$pardir")"

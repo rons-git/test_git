@@ -3,7 +3,6 @@
 prnCmd 'n'  && setColor 'title'  && echo 'Backup POC directory and subdirectories'
 source="$(dirname "$(dirname "$PWD")")"
 setColor 'info' && echo "$source"
-exit
 dest='/mnt/d/onedrive/backups'
 now=$(date +%y-%m-%d_%H_%M_%S)
 archive="$(basename "$source")"'_Backup_'"$now"'.tgz'
