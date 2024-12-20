@@ -1,0 +1,33 @@
+#!/bin/bash
+tput setaf 196
+# $1 (required), the name of the remote repository being deleted, must exist in github.
+curRepoName="$1"
+# Exit with error message when the remote repository name is null
+[ -z "$curRepoName" ] && echo '***Error***:'" Remote Repository Name is null" && exit
+longRepoName=git@github.com:rons-git/"$curRepoName".git
+errMsg='***Error***: '""$curRepoName" does not exist in github"
+# Exit with error message when the remote repository does not exist
+[[ -n "$(echo "$(((git ls-remote "$longRepoName") 2>&1) | grep -i '^error:')")" ]] && echo "$errMsg" && exit
+# $2 (optional), the name of the local repository directory, is the current directory by default
+subdir="$2"
+# Exit with error message when the local repository directory does not exist
+if [ -n "$subdir" ]; then
+    [ ! -d "$subdir" ] && echo '***Error***: Directory '"$subdir" does not exist && exit
+    cd "$subdir"
+fi
+# If the current directory is not a repository, make it a repository
+tput setaf 6 && [ ! -d '.git' ] && git init 1>/dev/null
+# Create commit message
+now=$(date +%y-%m-%d_%H_%M_%S)
+commitMsg="$now"_commit
+# Add and commit changes to the local repository
+git add-commit -m "$commitMsg" 1>/dev/null
+# Remove all remote aliases
+git remote | xargs -n1 git remote remove &>/dev/null
+# Add the remote repository
+git remote add origin git@github.com:rons-git/"$curRepoName".git
+# Push the local source of truth repository changes to the remote repository
+git push origin main
+[ -z "$subdir" ] && subdir=${PWD##*/} 
+tput setaf 40 && echo Remote repository "$curRepoName" has been synchonized with local directory "$subdir"
+

@@ -1,0 +1,12 @@
+# Start from the node version 16 image
+FROM node:16 
+# Set /usr/src as the location for execution of The remaining instructions
+WORKDIR /usr/src    
+# Copy all files from current linux directory to Docker workdir
+COPY . .
+# Execute the ./mvrw package
+RUN npm install && npm run build && npm install -g serve
+# Assign CMD in docker run to "npx", "serve", "-s", "-l", "5000", "build"
+CMD ["npx", "serve", "-s", "-l", "5000", "build"]
+# Expose port 5000
+EXPOSE 5000

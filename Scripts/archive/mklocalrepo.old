@@ -1,0 +1,21 @@
+#!/bin/bash
+tput setaf 196
+# $1 (required), the name of the remote repository being deleted, must exist in github.
+curRepoName="$1"
+# Exit with error message when the remote repository name is null
+[ -z "$curRepoName" ] && echo '***Error***:'" Remote Repository Name is null" && exit
+longRepoName=git@github.com:rons-git/"$curRepoName".git
+errMsg='***Error***: '""$curRepoName" does not exist in github"
+# Exit with error message when the remote repository does not exist
+[[ -n "$(echo "$(((git ls-remote "$longRepoName") 2>&1) | grep -i '^error:')")" ]] && echo "$errMsg" && exit
+# $2 (optional), the name of the local repository directory, is $1 by default
+subdir="$2"
+[ -z "$subdir" ] && subdir='./'$curRepoName
+# Exit with error message when the local repository directory exists
+[ -d "$subdir" ] && tput setaf 196 && echo '***Error***: Directory '""$subdir" exists" && exit
+mkdir "$subdir" && cd "$subdir"
+# Initialize the local repository
+tput setaf 6 && git init 1>/dev/null
+# Clone the remote repository
+git clone "$longRepoName"
+tput setaf 40 && echo Local repository "$subdir" has been created and populated

@@ -1,0 +1,36 @@
+services:
+    backend:
+        container_name: backend
+        build: ./example-backend
+        environment:
+            REDIS_HOST: redis
+            POSTGRES_HOST: postgres
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DATABASE: postgres
+        depends_on:
+            - redis
+            - postgres
+        ports:
+            - 8080:8080
+    frontend:
+        container_name: frontend
+        build: ./example-frontend
+        depends_on:
+            - backend
+        ports:
+            - 5000:5000
+    redis:
+        container_name: redis
+        image: redis
+        restart: unless-stopped
+    postgres:
+        container_name: postgres
+        image: postgres
+        environment:
+            POSTGRES_HOST: postgres
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DATABASE: postgres
+        volumes:
+            - ~/bind/pgdata/exercise_2.07:/var/lib/postgresql/data

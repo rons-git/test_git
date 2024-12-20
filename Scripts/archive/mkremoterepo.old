@@ -1,0 +1,32 @@
+#!/bin/bash
+tput setaf 196
+# $1 (required), the name of the remote repository being created, must not exist in github.
+newRepoName="$1"
+# Exit with error message when the remote repository name is null
+[ -z "$newRepoName" ] && echo '***Error***:'" Remote Repository Name is null" && exit
+longRepoName=git@github.com:rons-git/"$newRepoName".git
+errMsg='***Error***: '""$newRepoName" exists in github"
+# Exit with error message when the remote repository exists
+[[ -z "$(echo "$(((git ls-remote "$longRepoName") 2>&1) | grep -i '^error:')")" ]] && echo "$errMsg" && exit
+# $2 (optional), the name of the local repository directory, is the current directory by default
+subdir="$2"
+# Exit with error message when the local repository directory does not exist
+if [ -n "$subdir" ]; then
+    [ ! -d "$subdir" ] && echo '***Error***: Directory '"$subdir" does not exist && exit
+    cd "$subdir"
+fi
+# Remove all existing .git's from the local repository directory
+find . -name .git -prune -exec rm -rf {} \;
+# Initialize the local repository
+tput setaf 6 && git init 1>/dev/null
+# Create commit message
+now=$(date +%y-%m-%d_%H_%M_%S)
+commitMsg="$now"_commit
+# Add all and commit to the local repository
+git add-commit -m "$commitMsg" 1>/dev/null
+# Remove all remote names from the local repository
+git remote | xargs -n1 git remote remove 2>/dev/null
+# Create the remote repository from the local source of truth repository
+tput setaf 40 && NO_COLOR=true gh repo create "$newRepoName" --public --source=.
+tput setaf 6 && git push origin main
+tput setaf 40 && echo New remote repository "$newRepoName" has been created and populated

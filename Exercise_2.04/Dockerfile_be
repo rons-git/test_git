@@ -1,0 +1,14 @@
+# Start from the ubuntu image
+FROM golang:1.16.3
+# Set /usr/src/app as the location for execution of The remaining instructions
+WORKDIR /usr/src/app
+# Copy all files from the current linux diretory to the Docker root directory
+COPY . .
+# Allow http://localhost:5000 to pass to the front end
+ENV REQUEST_ORIGIN http://localhost:5000
+# Run go build. It will generate a binary named server
+RUN go build
+# Run tests with go test ./...
+RUN go test
+# Assign CMD in docker run to ./server
+CMD ./server

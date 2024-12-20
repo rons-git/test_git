@@ -1,0 +1,34 @@
+#!/bin/bash
+tput setaf 196
+# $1 (required), the name of the remote repository being deleted, must exist in github.
+killRepoName="$1"
+# Exit with error message when the remote repository name is null
+[ -z "$killRepoName" ] && echo '***Error***:'" Remote Repository Name is null" && exit
+longRepoName=git@github.com:rons-git/"$killRepoName".git
+errMsg='***Error***: '""$killRepoName" does not exist in github"
+# Exit with error message when the remote repository does not exist
+[[ -n "$(echo "$(((git ls-remote "$longRepoName") 2>&1) | grep -i '^error:')")" ]] && echo "$errMsg" && exit
+# $2 (optional), the name of the local repository directory, is the current directory by default
+subdir="$2"
+# Exit with error message when the local repository directory does not exist
+if [ -n "$subdir" ] && [ "$subdir" != 'none' ]; then
+    [ ! -d "$subdir" ] && tput setaf 196 && echo '***Error***: Directory '"$subdir" does not exist && exit
+    cd "$subdir"
+fi
+# If $2 is set to none, the local repository is not deleted
+if [ "$subdir" != 'none' ]; then
+    cd "$subdir"
+    # Remove all remote names from the local repository
+    git remote | xargs -n1 git remote remove 2>/dev/null
+    # Remove all remote aliases
+    git remote | xargs -n1 git remote remove &>/dev/null
+    # Remove all existing .git's from the local repository directory
+    find . -name .git -prune -exec rm -rf {} \;
+fi
+tput setaf 6
+# Authenticate the remote repository deletion
+NO_COLOR=true gh auth refresh -h github.com -s delete_repo
+# Delete the remote repository
+NO_COLOR=true gh repo delete "$killRepoName" --yes
+[ -z "$subdir" ] && subdir=${PWD##*/} 
+tput setaf 40 && echo .git files have been deleted in "$subdir" and all subdirectories

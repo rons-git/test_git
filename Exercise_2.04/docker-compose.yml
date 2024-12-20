@@ -1,0 +1,21 @@
+services:
+    backend:
+        container_name: backend
+        build: ./example-backend
+        environment:
+            REDIS_HOST: redis
+        depends_on:
+            - redis
+        ports:
+            - 8080:8080
+    frontend:
+        container_name: frontend
+        build: ./example-frontend
+        depends_on:
+            - backend
+        ports:
+            - 5000:5000
+    redis:
+        container_name: redis-cache
+        image: redis
+        restart: unless-stopped

@@ -1,0 +1,12 @@
+# Start from the node version 16 image
+FROM node:16
+# Set /usr/src/app as the location for execution of The remaining instructions
+WORKDIR /usr/src/app
+# Copy all files from the current linux diretory to the Docker workdir
+COPY . .
+# Set Backend URL
+ENV REACT_APP_BACKEND_URL http://localhost:8080/
+# Install node, build the static files, and serve the project
+RUN npm install && npm run build && npm install -g serve
+# Assign CMD in docker run to "npx", "serve", "-s", "-l", "5000", "build"
+CMD ["npx", "serve", "-s", "-l", "5000", "build"]

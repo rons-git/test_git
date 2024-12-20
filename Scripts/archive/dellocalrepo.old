@@ -1,0 +1,15 @@
+#!/bin/bash
+tput setaf 196
+# $1 (optional), the name of the local repository directory, is the current directory by default
+subdir="$1"
+# Exit with error message when the local directory does not exist
+if [ -n "$subdir" ]; then
+    [ ! -d "$subdir" ] && echo '***Error***: Directory '"$subdir" does not exist && exit
+    cd "$subdir"
+else subdir=${PWD##*/}
+fi
+# Exit with error message when the local directory is not a repository
+[ ! -d '.git' ] && echo '***Error***: Directory '"$subdir" is not a git repository && exit
+# Remove all existing .git's from the local repository directory
+find . -name .git -prune -exec rm -rf {} \;
+tput setaf 40 && echo .git files have been deleted in "$subdir" and all subdirectories
