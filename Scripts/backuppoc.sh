@@ -7,6 +7,6 @@ now=$(date +%y-%m-%d_%H_%M_%S)
 archive="$(basename "$source")"'_Backup_'"$now"'.tgz'
 setColor 'info' && echo 'Creating file '"$archive"
 cd "$source" && cd ..
-tar czf "$dest"'/'"$archive" -C "$(basename "$source")"
+tar czf "$dest"'/'"$archive" "$(basename "$source")"
 # Remove all but the 100 most recent files
 ls -dt "$dest"/* | tail -n +101 | xargs -d '\n' rm 2>/dev/null
