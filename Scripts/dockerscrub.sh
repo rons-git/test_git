@@ -1,5 +1,4 @@
 #!/bin/bash
-echo I am here
 tput setaf 3 && echo Remove All Images and Containers && tput setaf 252 && set -x
 # Remove all Docker containers
 docker rm -f $(docker ps -aq) &> /dev/null
